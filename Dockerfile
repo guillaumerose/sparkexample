@@ -1,8 +1,4 @@
-FROM java:8 
-
-# Install maven
-RUN apt-get update
-RUN apt-get install -y maven
+FROM maven:3.5-jdk-8-alpine
 
 WORKDIR /code
 
@@ -15,5 +11,7 @@ RUN ["mvn", "verify"]
 ADD src /code/src
 RUN ["mvn", "package"]
 
+FROM openjdk:8-jre-alpine
+COPY --from=0 /code/target/sparkexample-jar-with-dependencies.jar .
 EXPOSE 4567
-CMD ["/usr/lib/jvm/java-8-openjdk-amd64/bin/java", "-jar", "target/sparkexample-jar-with-dependencies.jar"]
+CMD ["java", "-jar", "sparkexample-jar-with-dependencies.jar"]
